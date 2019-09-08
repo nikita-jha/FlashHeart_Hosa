@@ -19,6 +19,9 @@
 
 Adafruit_TFTLCD tft(LCD_CS, LCD_CD, LCD_WR, LCD_RD, LCD_RESET);
 
+int loopNumber = 0; 
+
+
 void setup() {
 
   //Serial.begin(9600);
@@ -42,6 +45,9 @@ void setup() {
   tft.print("Risk Level: ");
 
 }
+void reset() {
+  loopNumber = 0; 
+}
 
 void loop() 
 {
@@ -53,12 +59,18 @@ void loop()
   String S_Normal = String(16);
   String S_EmergencyCare = String(16);
   String S_PrecautionCare = String(16);
+  String S_Initial = String(16); 
+  String S_PostInitial = String(16);
+  String S_Final = String(16);
   S_Rest = "Insert Blood Sample "; 
   S_Normal = "Normal: "; 
   S_Precaution = "Precaution: ";
   S_Danger = "Danger: ";
   S_EmergencyCare = "Dialing 911...";
   S_PrecautionCare = "Consult Doctor";  
+   S_Initial = "Detected Sample "; 
+  S_PostInitial = "Analyzing Blood... "; 
+  S_Final = "Results are: "; 
   analogValue = analogRead(0);
   tft.fillRect(80,200,321,60,BLACK);
   tft.fillRect(80,200,321,60,BLUE);
@@ -71,22 +83,105 @@ void loop()
           tft.setTextColor(WHITE);
           tft.setTextSize(2.5);
           displayVal = S_Rest;
+          loopNumber = 0; 
           
-  }else if ( analogValue < 850){
+  }else if ((analogValue < 850)){
+    if(loopNumber == 0) {
+      tft.setCursor(115,220);
+      tft.setTextColor(WHITE);
+      tft.setTextSize(2);
+      displayVal = S_Initial;
+      delay(500);
+      loopNumber = 1;  
+      
+    }else if(loopNumber == 1) {
+      tft.setCursor(115,220);
+      tft.setTextColor(WHITE);
+      tft.setTextSize(2);
+      displayVal = S_PostInitial;
+        delay(500);
+      loopNumber = 2;  
+      
+    }
+    else if(loopNumber == 2) {
+      tft.setCursor(115,220);
+      tft.setTextColor(WHITE);
+      tft.setTextSize(2);
+      displayVal = S_Final;
+        delay(500);
+      loopNumber = 3; 
+    }
+    else if(loopNumber == 3) {
           displayVal = S_Normal +analogValue ;//+ " " + "Normal";
+    }
           
-  }else if (analogValue < 1000 ){
-          tft.setCursor(110,215);
-          tft.setTextColor(WHITE);
-          tft.setTextSize(3);
-          displayVal = S_Precaution + analogValue;// + " " + "Precaution";
-          
-  }else {
-          displayVal = S_Danger +analogValue ;// + " " + "Danger";
+  }else if (analogValue < 920 ){
+    
+    if(loopNumber == 0) {
+      tft.setCursor(115,220);
+      tft.setTextColor(WHITE);
+      tft.setTextSize(2);
+      displayVal = S_Initial;
+      delay(500);
+      loopNumber = 1;  
+      
+    }else if(loopNumber == 1) {
+      tft.setCursor(115,220);
+      tft.setTextColor(WHITE);
+      tft.setTextSize(2);
+      displayVal = S_PostInitial;
+        delay(500);
+      loopNumber = 2;  
+      
+    }else if(loopNumber == 2) {
+      tft.setCursor(115,220);
+      tft.setTextColor(WHITE);
+      tft.setTextSize(2);
+      displayVal = S_Final;
+        delay(500);
+      loopNumber = 3; 
+    }else if(loopNumber == 3) {
+      tft.setCursor(110,220);
+      tft.setTextColor(WHITE);
+      tft.setTextSize(3);
+      displayVal = S_Precaution + analogValue;// + " " + "Precaution";
+    }
+    }else {
+   if(loopNumber == 0) {
+      tft.setCursor(115,220);
+      tft.setTextColor(WHITE);
+      tft.setTextSize(2);
+      displayVal = S_Initial;
+      delay(500);
+      loopNumber = 1;  
+      
+    }else if(loopNumber == 1) {
+      tft.setCursor(115,220);
+      tft.setTextColor(WHITE);
+      tft.setTextSize(2);
+      displayVal = S_PostInitial;
+        delay(500);
+      loopNumber = 2;  
+      
+    }else if(loopNumber == 2) {
+      tft.setCursor(115,220);
+      tft.setTextColor(WHITE);
+      tft.setTextSize(2);
+      displayVal = S_Final;
+        delay(500);
+      loopNumber = 3; 
+    }else if(loopNumber == 3) {
+      displayVal = S_Danger +analogValue ;// + " " + "Danger";
+
+    }
+
   }
-  //Serial.println(AnalogValue);  
+  //Serial.println(displayVal);  
 
   tft.print(displayVal);
   delay(1000);
+  if(loopNumber == 2) {
+    delay(2000);
+  }
 }
   
